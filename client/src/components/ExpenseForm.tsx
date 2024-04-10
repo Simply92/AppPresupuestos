@@ -1,3 +1,4 @@
+import { categories } from "../data/categories"
 
 const ExpenseForm = () => {
     return (
@@ -29,6 +30,26 @@ const ExpenseForm = () => {
                     placeholder="Añade las cantidad del gasto ej. 300"
                     className="bg-slate-100 p-2"
                     name="amount" />
+            </div>
+            <div className="flex flex-col gap-2">
+                <label
+                    htmlFor="amount"
+                    className="text-xl">
+                    Categoria:
+                </label>
+                <select 
+                name="category" 
+                id="category"
+                >
+                    <option value="">-- Seleccione --</option>
+                    {categories.map (category => (
+                        <option 
+                        key={category.id}
+                        value={category.id}>
+                        {category.name}
+                        </option>
+                    ))}
+                </select>
             </div>
 
         </form>
