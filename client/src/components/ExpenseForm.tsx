@@ -6,6 +6,7 @@ import 'react-calendar/dist/Calendar.css'
 import 'react-date-picker/dist/DatePicker.css'
 import ErrorMessage from "./ErrorMessage";
 import { useBudget } from "../hooks/useBudget";
+import Swal from "sweetalert2";
 
 const ExpenseForm = () => {
 
@@ -55,17 +56,51 @@ const ExpenseForm = () => {
         }
 
         if (state.editId) {
-            dispatch({ type: 'update-expense', payload: { expense: { id: state.editId, ...expense } } })
+            Swal.fire({
+                title: "¿Seguro que deseas modificar este gasto?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Modificar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Modificado",
+                        text: "Su gasto fue modificado",
+                        icon: "success"
+                    });
+                    dispatch({ type: 'update-expense', payload: { expense: { id: state.editId, ...expense } } })
+                }
+            });
         } else {
-            dispatch({ type: 'add-expense', payload: { expense } })
+            Swal.fire({
+                title: "¿Deseas seguir cargando gastos?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si",
+                cancelButtonText: "No"
+            }).then((result2) => {
+                if (result2.isConfirmed) {
+                    dispatch({ type: 'add-expense', payload: { expense, modal: true } })
+                    setExpense({
+                        amount: 0,
+                        expenseName: '',
+                        category: '',
+                        date: new Date()
+                    })
+                } else {
+                    dispatch({ type: 'add-expense', payload: { expense, modal: false } })
+                }
+                Swal.fire({
+                    title: "Gasto cargado",
+                    text: "Su gasto fue cargado exitosamente",
+                    icon: "success"
+                });
+            })
         }
-
-        setExpense({
-            amount: 0,
-            expenseName: '',
-            category: '',
-            date: new Date()
-        })
         setPreviousAmount(0)
     }
 
